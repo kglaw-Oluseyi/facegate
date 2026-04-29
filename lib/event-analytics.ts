@@ -1,5 +1,4 @@
 import { Decision } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 
 export type AnalyticsPayload = {
   hourlyAllows: { hour: string; count: number }[];
@@ -9,6 +8,7 @@ export type AnalyticsPayload = {
 };
 
 export async function computeEventAnalytics(eventId: string): Promise<AnalyticsPayload> {
+  const { prisma } = await import("@/lib/prisma");
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     select: { startsAt: true, endsAt: true },
