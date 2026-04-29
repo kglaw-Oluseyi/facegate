@@ -4,26 +4,55 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3.9%;
-    --foreground: 60 9% 96%;
-    --card: 0 0% 6.7%;
-    --card-foreground: 60 9% 96%;
-    --popover: 0 0% 6.7%;
-    --popover-foreground: 60 9% 96%;
-    --primary: 43 52% 54%;
-    --primary-foreground: 0 0% 8%;
-    --secondary: 0 0% 10.2%;
-    --secondary-foreground: 60 9% 96%;
-    --muted: 0 0% 10.2%;
-    --muted-foreground: 54 4% 52%;
-    --accent: 0 0% 10.2%;
-    --accent-foreground: 60 9% 96%;
-    --destructive: 0 45% 26%;
-    --destructive-foreground: 0 91% 71%;
-    --border: 0 0% 16.5%;
-    --input: 0 0% 16.5%;
-    --ring: 43 52% 54%;
+    /* Maison Doclar design tokens */
+    --background: #000000;
+    --foreground: #FFFFF0;
+    --card: #0a0a0a;
+    --card-foreground: #FFFFF0;
+    --popover: #0a0a0a;
+    --popover-foreground: #FFFFF0;
+    --primary: #b79f85;
+    --primary-foreground: #000000;
+    --secondary: #E8E8D8;
+    --secondary-foreground: #1A1814;
+    --muted: #141414;
+    --muted-foreground: #888888;
+    --accent: #141414;
+    --accent-foreground: #FFFFF0;
+    --destructive: #D32F2F;
+    --destructive-foreground: #FFFFF0;
+    --border: #333333;
+    --input: #333333;
+    --ring: #b79f85;
     --radius: 0.5rem;
+  }
+
+  html.light {
+    --background: #F8F6F1;
+    --foreground: #1A1814;
+    --card: #FFFFFF;
+    --card-foreground: #1A1814;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1814;
+    --primary: #8B6F2E;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F0EDE6;
+    --secondary-foreground: #1A1814;
+    --muted: #F0EDE6;
+    --muted-foreground: #8A8680;
+    --accent: #F0EDE6;
+    --accent-foreground: #1A1814;
+    --border: #E0DDD6;
+    --input: #E0DDD6;
+    --ring: #8B6F2E;
+
+    /* Light-mode semantic helpers requested by spec (used by kiosk/admin surfaces as needed) */
+    --surface: #FFFFFF;
+    --elevated: #F0EDE6;
+    --text-primary: #1A1814;
+    --text-secondary: #4A4640;
+    --text-muted: #8A8680;
+    --gold: #8B6F2E;
   }
 
   * {
@@ -35,8 +64,90 @@
   }
 }
 
+/* Maison Doclar UI polish */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #8a7761;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b79f85;
+}
+
+::selection {
+  background: rgba(183, 159, 133, 0.3);
+  color: #FFFFF0;
+}
+
+*:focus-visible {
+  outline: 2px solid #b79f85;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    transform: translateY(-8px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes kiosk-ring-pulse {
+  0% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .fg-skeleton {
+    background-image: linear-gradient(90deg, #141414 0%, #1f1f1f 50%, #141414 100%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite linear;
   }
 }

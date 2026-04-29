@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EventMode, EventStatus } from "@prisma/client";
 import type { KioskConfigResolved } from "@/lib/kiosk-config";
@@ -570,8 +571,21 @@ export function KioskScanEngine({ devicePublicId }: { devicePublicId: string }) 
   const idleVisible =
     phase === "idle" || phase === "processing" || phase === "enroll_invite";
 
+  const kioskBg = cfg?.backgroundColour ?? "#0A0A0A";
+  const kioskAccent = cfg?.primaryColour ?? "#b79f85";
+  const kioskText = cfg?.textColour ?? "#F5F5F0";
+
   return (
-    <div className="relative h-full min-h-[100dvh] w-full bg-[#0A0A0A] text-fg-ink">
+    <div
+      className="relative h-full min-h-[100dvh] w-full bg-[var(--kiosk-bg)] text-[var(--kiosk-text)]"
+      style={
+        {
+          "--kiosk-bg": kioskBg,
+          "--kiosk-accent": kioskAccent,
+          "--kiosk-text": kioskText,
+        } as CSSProperties
+      }
+    >
       <div
         className={cn(
           "absolute inset-0 z-0 transition-opacity duration-300",
@@ -600,19 +614,19 @@ export function KioskScanEngine({ devicePublicId }: { devicePublicId: string }) 
       ) : null}
 
       {phase === "standby" ? (
-        <div className="absolute inset-0 z-30 bg-[#0A0A0A]">
+        <div className="absolute inset-0 z-30 bg-[var(--kiosk-bg)]">
           <KioskStandbyState eventName={eventName || "—"} />
         </div>
       ) : null}
 
       {phase === "gate_paused" ? (
-        <div className="absolute inset-0 z-30 bg-[#0A0A0A]">
+        <div className="absolute inset-0 z-30 bg-[var(--kiosk-bg)]">
           <KioskGatePausedState eventName={eventName || "—"} gateName={gateName || "—"} />
         </div>
       ) : null}
 
       {phase === "unavailable" ? (
-        <div className="absolute inset-0 z-30 bg-[#0A0A0A]">
+        <div className="absolute inset-0 z-30 bg-[var(--kiosk-bg)]">
           <KioskUnavailableState
             eventName={eventName || "—"}
             gateName={gateName || "—"}
@@ -640,13 +654,13 @@ export function KioskScanEngine({ devicePublicId }: { devicePublicId: string }) 
       ) : null}
 
       {phase === "deny" && cfg ? (
-        <div className="absolute inset-0 z-40 bg-[#0A0A0A]">
+        <div className="absolute inset-0 z-40 bg-[var(--kiosk-bg)]">
           <KioskDenyState denyCopy={cfg.denyCopy} resetAfterMs={cfg.resetAfterMs} onDone={resetToIdle} />
         </div>
       ) : null}
 
       {phase === "error" && cfg ? (
-        <div className="absolute inset-0 z-40 bg-[#0A0A0A]">
+        <div className="absolute inset-0 z-40 bg-[var(--kiosk-bg)]">
           <KioskErrorState
             errorCopy={cfg.errorCopy}
             resetAfterMs={cfg.resetAfterMs}

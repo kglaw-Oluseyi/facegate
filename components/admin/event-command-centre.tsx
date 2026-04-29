@@ -77,6 +77,33 @@ type LiveMetricBundle = {
   activeDevices: number;
 };
 
+const KIOSK_THEME_PRESETS = {
+  obsidian: {
+    theme: "obsidian",
+    backgroundColour: "#0A0A0A",
+    primaryColour: "#b79f85",
+    textColour: "#F5F5F0",
+  },
+  ivory: {
+    theme: "ivory",
+    backgroundColour: "#F8F4EE",
+    primaryColour: "#8B6F2E",
+    textColour: "#1A1814",
+  },
+  slate: {
+    theme: "slate",
+    backgroundColour: "#0F1419",
+    primaryColour: "#7B9EAE",
+    textColour: "#E8EDF0",
+  },
+  custom: {
+    theme: "custom",
+    backgroundColour: "#0A0A0A",
+    primaryColour: "#b79f85",
+    textColour: "#F5F5F0",
+  },
+} as const;
+
 function devicePulseClass(lastSeenAt: string | null): string {
   if (!lastSeenAt) return "bg-fg-danger-text";
   const sec = (Date.now() - new Date(lastSeenAt).getTime()) / 1000;
@@ -260,6 +287,10 @@ export function EventCommandCentre({
         errorCopy: kioskForm.errorCopy,
         unavailableCopy: kioskForm.unavailableCopy,
         resetAfterMs: kioskForm.resetAfterMs,
+        theme: kioskForm.theme,
+        primaryColour: kioskForm.primaryColour,
+        backgroundColour: kioskForm.backgroundColour,
+        textColour: kioskForm.textColour,
         consentPerEventConfirmed: transitioningPerEvent ? true : undefined,
       }),
     });
@@ -607,6 +638,125 @@ export function EventCommandCentre({
               }
               className="max-w-xs border-fg-line bg-fg-elevated text-fg-ink"
             />
+          </div>
+
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label className="text-fg-mist">Kiosk theme</Label>
+              <p className="text-xs text-fg-mist">
+                Controls kiosk background and accent colours. Changes propagate on the next device
+                heartbeat.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  ["obsidian", "Obsidian"],
+                  ["ivory", "Ivory"],
+                  ["slate", "Slate"],
+                  ["custom", "Custom"],
+                ] as const
+              ).map(([key, label]) => {
+                const preset = KIOSK_THEME_PRESETS[key];
+                const active = kioskForm.theme === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    disabled={!mutate || kioskSaving}
+                    onClick={() =>
+                      setKioskForm((k) => ({
+                        ...k,
+                        theme: preset.theme,
+                        backgroundColour:
+                          key === "custom" ? k.backgroundColour : preset.backgroundColour,
+                        primaryColour:
+                          key === "custom" ? k.primaryColour : preset.primaryColour,
+                        textColour: key === "custom" ? k.textColour : preset.textColour,
+                      }))
+                    }
+                    className={[
+                      "flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors",
+                      active
+                        ? "border-fg-gold bg-fg-elevated text-fg-ink"
+                        : "border-fg-line bg-fg-surface text-fg-mist hover:bg-fg-elevated hover:text-fg-ink",
+                    ].join(" ")}
+                    title={`${label} theme`}
+                  >
+                    <span
+                      className="h-4 w-4 rounded-sm border border-fg-line"
+                      style={{ background: preset.backgroundColour }}
+                      aria-hidden
+                    />
+                    <span
+                      className="h-4 w-4 rounded-sm border border-fg-line"
+                      style={{ background: preset.primaryColour }}
+                      aria-hidden
+                    />
+                    <span className="font-medium">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {kioskForm.theme === "custom" ? (
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="kiosk-bg" className="text-fg-mist">
+                    Background colour
+                  </Label>
+                  <Input
+                    id="kiosk-bg"
+                    value={kioskForm.backgroundColour}
+                    disabled={!mutate || kioskSaving}
+                    onChange={(e) =>
+                      setKioskForm((k) => ({
+                        ...k,
+                        backgroundColour: e.target.value,
+                      }))
+                    }
+                    className="border-fg-line bg-fg-elevated font-mono text-fg-ink"
+                    placeholder="#0A0A0A"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="kiosk-accent" className="text-fg-mist">
+                    Primary accent
+                  </Label>
+                  <Input
+                    id="kiosk-accent"
+                    value={kioskForm.primaryColour}
+                    disabled={!mutate || kioskSaving}
+                    onChange={(e) =>
+                      setKioskForm((k) => ({
+                        ...k,
+                        primaryColour: e.target.value,
+                      }))
+                    }
+                    className="border-fg-line bg-fg-elevated font-mono text-fg-ink"
+                    placeholder="#b79f85"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="kiosk-text" className="text-fg-mist">
+                    Text colour
+                  </Label>
+                  <Input
+                    id="kiosk-text"
+                    value={kioskForm.textColour}
+                    disabled={!mutate || kioskSaving}
+                    onChange={(e) =>
+                      setKioskForm((k) => ({
+                        ...k,
+                        textColour: e.target.value,
+                      }))
+                    }
+                    className="border-fg-line bg-fg-elevated font-mono text-fg-ink"
+                    placeholder="#F5F5F0"
+                  />
+                </div>
+              </div>
+            ) : null}
           </div>
 
           {mutate ? (

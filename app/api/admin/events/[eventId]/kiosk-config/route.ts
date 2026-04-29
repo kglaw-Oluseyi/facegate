@@ -77,6 +77,24 @@ export async function PATCH(
     errorCopy: patchFields.errorCopy,
     unavailableCopy: patchFields.unavailableCopy,
     resetAfterMs: patchFields.resetAfterMs,
+    theme:
+      patchFields.theme ??
+      (typeof existingRaw.theme === "string" ? existingRaw.theme : undefined),
+    primaryColour:
+      patchFields.primaryColour ??
+      (typeof existingRaw.primaryColour === "string"
+        ? existingRaw.primaryColour
+        : undefined),
+    backgroundColour:
+      patchFields.backgroundColour ??
+      (typeof existingRaw.backgroundColour === "string"
+        ? existingRaw.backgroundColour
+        : undefined),
+    textColour:
+      patchFields.textColour ??
+      (typeof existingRaw.textColour === "string"
+        ? existingRaw.textColour
+        : undefined),
   };
 
   const updated = await prisma.event.update({

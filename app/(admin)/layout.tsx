@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopBar } from "@/components/admin/admin-top-bar";
 import { isPlatformAdmin } from "@/lib/roles";
+import { ThemeProvider } from "@/lib/theme-context";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -20,18 +21,20 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const platform = isPlatformAdmin(session);
 
   return (
-    <div className="flex min-h-screen flex-col bg-fg-black text-fg-ink md:flex-row">
-      <AdminSidebar
-        tenantName={tenant?.name ?? "Organisation"}
-        showPlatform={platform}
-      />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <AdminTopBar
-          userName={session.user.name ?? session.user.email ?? "User"}
+    <ThemeProvider>
+      <div className="flex min-h-screen flex-col bg-fg-black text-fg-ink md:flex-row">
+        <AdminSidebar
+          tenantName={tenant?.name ?? "Organisation"}
           showPlatform={platform}
         />
-        <main className="flex-1 px-4 py-6 md:px-8">{children}</main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <AdminTopBar
+            userName={session.user.name ?? session.user.email ?? "User"}
+            showPlatform={platform}
+          />
+          <main className="flex-1 px-4 py-6 md:px-8">{children}</main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

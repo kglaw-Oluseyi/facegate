@@ -60,4 +60,8 @@ export const patchEventKioskConfigBody = z.object({
   unavailableCopy: z.string().min(1),
   resetAfterMs: z.number().int().min(1000).max(120_000),
   consentPerEventConfirmed: z.boolean().optional(),
+  theme: z.enum(["obsidian", "ivory", "slate", "custom"]).optional(),
+  primaryColour: z.string().min(4).max(32).optional(),
+  backgroundColour: z.string().min(4).max(32).optional(),
+  textColour: z.string().min(4).max(32).optional(),
 });

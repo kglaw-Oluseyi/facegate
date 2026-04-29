@@ -17,26 +17,31 @@ export function KioskDenyState({
   }, [onDone, resetAfterMs]);
 
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-[#0A0A0A] px-8">
-      <div className="animate-in fade-in duration-300 flex max-w-lg flex-col items-center gap-10 text-center">
-        <div className="text-fg-gold/70">
-          <svg viewBox="0 0 24 24" className="h-24 w-24" fill="none" aria-hidden>
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" opacity="0.35" />
+    <div className="relative flex h-full flex-col items-center justify-center bg-[var(--kiosk-bg)] px-8">
+      <div className="animate-in fade-in duration-300 flex max-w-lg flex-col items-center gap-6 text-center">
+        <div className="text-fg-gold-muted">
+          <svg viewBox="0 0 100 100" className="h-24 w-24" fill="none" aria-hidden>
             <path
-              d="M9 10h.01M15 10h.01M12 17v.01"
+              d="M 20 50 L 80 50"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="3"
               strokeLinecap="round"
-            />
-            <path
-              d="M8 15s1.5 2 4 2 4-2 4-2"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
+              opacity="0.9"
             />
           </svg>
         </div>
-        <p className="text-2xl font-medium leading-snug text-fg-ink">{denyCopy}</p>
+        <p className="font-display text-2xl font-medium leading-snug text-[color:var(--kiosk-text)]">
+          {denyCopy}
+        </p>
+        <p className="text-sm text-fg-mist">Please see our staff.</p>
+      </div>
+
+      <div
+        className="pointer-events-none fixed bottom-6 right-6 select-none font-display text-[11px] font-normal tracking-[0.15em]"
+        style={{ color: "rgba(183,159,133,0.25)" }}
+        aria-hidden
+      >
+        Maison Doclar
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ export function KioskUnavailableState({
   unavailableCopy: string;
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-[#0A0A0A] px-8 pb-12 pt-10">
+    <div className="relative flex h-full flex-col items-center justify-center bg-[var(--kiosk-bg)] px-8 pb-12 pt-10">
       <div className="animate-in fade-in duration-300 flex w-full max-w-lg flex-col items-center gap-10 text-center">
         <div className="flex flex-col gap-1 text-center">
           <p className="text-xs tracking-[0.18em] text-fg-gold/70">{eventName}</p>
@@ -40,6 +40,14 @@ export function KioskUnavailableState({
           </svg>
         </div>
         <p className="text-xl font-medium leading-snug text-fg-ink">{unavailableCopy}</p>
+      </div>
+
+      <div
+        className="pointer-events-none fixed bottom-6 right-6 select-none font-display text-[11px] font-normal tracking-[0.15em]"
+        style={{ color: "rgba(183,159,133,0.25)" }}
+        aria-hidden
+      >
+        Maison Doclar
       </div>
     </div>
   );

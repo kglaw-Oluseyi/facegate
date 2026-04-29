@@ -2,6 +2,8 @@ import type { Prisma } from "@prisma/client";
 
 export type ConsentMode = "per-guest" | "per-event";
 
+export type KioskThemePreset = "obsidian" | "ivory" | "slate" | "custom";
+
 export type KioskConfigResolved = {
   consentMode: ConsentMode;
   allowNameDisplay: boolean;
@@ -10,6 +12,10 @@ export type KioskConfigResolved = {
   errorCopy: string;
   unavailableCopy: string;
   resetAfterMs: number;
+  theme: KioskThemePreset;
+  primaryColour: string;
+  backgroundColour: string;
+  textColour: string;
 };
 
 function envConsentDefault(): ConsentMode {
@@ -26,6 +32,10 @@ export function resolveKioskConfig(raw: Prisma.JsonValue | null | undefined): Ki
     errorCopy: "Please see our staff. This gate is temporarily unavailable.",
     unavailableCopy: "Please see our staff at the main entrance.",
     resetAfterMs: 4000,
+    theme: "obsidian",
+    primaryColour: "#b79f85",
+    backgroundColour: "#0A0A0A",
+    textColour: "#F5F5F0",
   };
 
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
@@ -54,6 +64,24 @@ export function resolveKioskConfig(raw: Prisma.JsonValue | null | undefined): Ki
     resetAfterMs = Math.floor(o.resetAfterMs);
   }
 
+  let theme: KioskThemePreset = defaults.theme;
+  if (o.theme === "obsidian" || o.theme === "ivory" || o.theme === "slate" || o.theme === "custom") {
+    theme = o.theme;
+  }
+
+  const primaryColour =
+    typeof o.primaryColour === "string" && o.primaryColour.trim()
+      ? o.primaryColour
+      : defaults.primaryColour;
+  const backgroundColour =
+    typeof o.backgroundColour === "string" && o.backgroundColour.trim()
+      ? o.backgroundColour
+      : defaults.backgroundColour;
+  const textColour =
+    typeof o.textColour === "string" && o.textColour.trim()
+      ? o.textColour
+      : defaults.textColour;
+
   return {
     consentMode,
     allowNameDisplay,
@@ -62,5 +90,9 @@ export function resolveKioskConfig(raw: Prisma.JsonValue | null | undefined): Ki
     errorCopy,
     unavailableCopy,
     resetAfterMs,
+    theme,
+    primaryColour,
+    backgroundColour,
+    textColour,
   };
 }

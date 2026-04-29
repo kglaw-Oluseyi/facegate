@@ -8,6 +8,8 @@ import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/admin/notification-bell";
+import { AdminThemeToggle } from "@/components/admin/theme-toggle";
+import { HelpButton } from "@/components/admin/help-button";
 
 function titleFromPath(pathname: string | null): string {
   if (!pathname) return "Console";
@@ -74,6 +76,8 @@ export function AdminTopBar({
     <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-fg-line bg-fg-black/80 px-4 backdrop-blur md:px-8">
       <h1 className="truncate text-lg font-semibold tracking-tight text-fg-ink">{displayTitle}</h1>
       <div className="flex items-center gap-3">
+        <HelpButton />
+        <AdminThemeToggle />
         <NotificationBell />
         {showPlatform ? (
           <Button

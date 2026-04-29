@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { StaffShell } from "@/components/staff/staff-shell";
 import { STAFF_EVENT_COOKIE } from "@/lib/staff/cookies";
+import { ThemeProvider } from "@/lib/theme-context";
 
 export default async function StaffSectionLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -21,5 +22,9 @@ export default async function StaffSectionLayout({ children }: { children: React
       })
     : null;
 
-  return <StaffShell eventName={event?.name ?? null}>{children}</StaffShell>;
+  return (
+    <ThemeProvider>
+      <StaffShell eventName={event?.name ?? null}>{children}</StaffShell>
+    </ThemeProvider>
+  );
 }

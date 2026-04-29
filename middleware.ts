@@ -35,7 +35,10 @@ function staffWorkspaceAllowed(role: string | undefined): boolean {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+  if (
+    (pathname === "/admin" || pathname.startsWith("/admin/")) &&
+    !pathname.startsWith("/admin/help")
+  ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

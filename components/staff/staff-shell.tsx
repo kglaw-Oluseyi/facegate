@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { StaffThemeToggle } from "@/components/staff/theme-toggle";
 
 const links = [
   { href: "/staff/guests", label: "Guests", icon: Users },
@@ -74,6 +75,7 @@ export function StaffShell({
             <p className="text-lg font-semibold text-fg-ink">{eventName ?? "—"}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <StaffThemeToggle />
             <span className="text-sm text-fg-mist">{data?.user?.name}</span>
             <Button
               type="button"
