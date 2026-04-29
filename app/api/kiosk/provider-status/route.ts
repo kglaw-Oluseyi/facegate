@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getBiometricProvider } from "@/lib/biometric";
 import { BiometricProviderError } from "@/lib/biometric/errors";
 import { jsonOk } from "@/lib/api-response";

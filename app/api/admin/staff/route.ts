@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import bcrypt from "bcryptjs";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";

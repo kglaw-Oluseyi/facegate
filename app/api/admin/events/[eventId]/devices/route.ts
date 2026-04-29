@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { randomBytes } from "crypto";
 import bcrypt from "bcryptjs";
 import { DeviceStatus } from "@prisma/client";

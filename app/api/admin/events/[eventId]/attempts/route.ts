@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Decision, Prisma } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";

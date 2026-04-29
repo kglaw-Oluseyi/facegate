@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { EventStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";

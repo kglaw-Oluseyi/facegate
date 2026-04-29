@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { jsonErr, jsonOk } from "@/lib/api-response";
 import { isPlatformAdmin } from "@/lib/roles";

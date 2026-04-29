@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { AdmissionState, Decision, EnrollmentStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";

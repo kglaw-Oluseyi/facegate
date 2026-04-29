@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { jsonErr, jsonOk } from "@/lib/api-response";
 import { authenticateKioskDevice } from "@/lib/kiosk-auth";

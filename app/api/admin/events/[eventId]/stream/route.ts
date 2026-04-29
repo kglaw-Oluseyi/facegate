@@ -1,8 +1,8 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth";
 import { computeLiveEventMetrics } from "@/lib/live-event-metrics";
 import { jsonErr } from "@/lib/api-response";
 
-export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(

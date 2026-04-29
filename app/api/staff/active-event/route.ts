@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { auth } from "@/lib/auth";

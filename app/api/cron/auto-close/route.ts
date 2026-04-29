@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { EventStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { jsonErr, jsonOk } from "@/lib/api-response";
