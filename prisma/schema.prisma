@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Tenant {
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  createdAt     DateTime       @default(now())
+  events        Event[]
+  staffUsers    StaffUser[]
+  notifications Notification[]
+}
+
+model Event {
+  id                      String        @id @default(cuid())
+  tenantId                String
+  tenant                  Tenant        @relation(fields: [tenantId], references: [id])
+  name                    String
+  slug                    String
+  venueName               String
+  venueTimezone           String        @default("Europe/London")
+  startsAt                DateTime
+  endsAt                  DateTime
+  status                  EventStatus   @default(DRAFT)
+  mode                    EventMode     @default(STANDALONE)
+  biometricRetentionUntil DateTime?
+  logRetentionUntil       DateTime?
+  kioskConfig             Json          @default("{}")
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  gates                   Gate[]
+  guests                  Guest[]
+  enrollments             BiometricEnrollment[]
+  attempts                ReentryAttempt[]
+  auditEvents             AuditEvent[]
+  deletionRuns            DeletionRun[]
+  staffPermissions        EventStaffPermission[]
+  notifications           Notification[]
+
+  @@unique([tenantId, slug])
+}
+
+enum EventStatus {
+  DRAFT
+  READY
+  LIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum EventMode {
+  STANDALONE
+  INTEGRATED
+}
+
+model Gate {
+  id        String     @id @default(cuid())
+  eventId   String
+  event     Event      @relation(fields: [eventId], references: [id])
+  name      String
+  code      String
+  gateType  GateType   @default(REENTRY)
+  isActive  Boolean    @default(true)
+  devices   GateDevice[]
+  attempts  ReentryAttempt[]
+
+  @@unique([eventId, code])
+}
+
+enum GateType {
+  CHECKIN
+  REENTRY
+}
+
+model GateDevice {
+  id             String       @id @default(cuid())
+  gateId         String
+  gate           Gate         @relation(fields: [gateId], references: [id])
+  eventId        String
+  devicePublicId String       @unique @default(cuid())
+  deviceSecretHash String
+  status         DeviceStatus @default(ACTIVE)
+  lastSeenAt     DateTime?
+  createdAt      DateTime     @default(now())
+  attempts       ReentryAttempt[]
+}
+
+enum DeviceStatus {
+  ACTIVE
+  REVOKED
+}
+
+model Guest {
+  id             String        @id @default(cuid())
+  eventId        String
+  event          Event         @relation(fields: [eventId], references: [id])
+  externalId     String?
+  name           String?
+  admissionState AdmissionState @default(NOT_CHECKED_IN)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  enrollments    BiometricEnrollment[]
+  attempts       ReentryAttempt[]
+
+  @@unique([eventId, externalId])
+}
+
+enum AdmissionState {
+  NOT_CHECKED_IN
+  CHECKED_IN
+  REVOKED
+}
+
+model BiometricEnrollment {
+  id                  String           @id @default(cuid())
+  eventId             String
+  event               Event            @relation(fields: [eventId], references: [id])
+  guestId             String
+  guest               Guest            @relation(fields: [guestId], references: [id])
+  provider            String
+  providerBiometricRef String?
+  status              EnrollmentStatus @default(ACTIVE)
+  enrolledBy          String?
+  enrolledAt          DateTime         @default(now())
+
+  @@unique([eventId, providerBiometricRef])
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  SUPERSEDED
+  REVOKED
+  DELETED
+}
+
+model ReentryAttempt {
+  id                  String    @id @default(cuid())
+  eventId             String
+  event               Event     @relation(fields: [eventId], references: [id])
+  gateId              String
+  gate                Gate      @relation(fields: [gateId], references: [id])
+  deviceId            String
+  device              GateDevice @relation(fields: [deviceId], references: [id])
+  clientRequestId     String    @unique
+  decision            Decision
+  decisionReason      String
+  matchedGuestId      String?
+  matchedGuest        Guest?    @relation(fields: [matchedGuestId], references: [id])
+  latencyMs           Int?
+  duplicateOfAttemptId String?
+  attemptedAt         DateTime  @default(now())
+
+  @@index([eventId, attemptedAt])
+  @@index([eventId, gateId])
+}
+
+enum Decision {
+  ALLOW
+  DENY
+  ERROR
+}
+
+model StaffUser {
+  id             String         @id @default(cuid())
+  tenantId       String
+  tenant         Tenant         @relation(fields: [tenantId], references: [id])
+  email          String
+  passwordHash   String
+  name           String
+  role           StaffRole      @default(STAFF)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  permissions    EventStaffPermission[]
+  auditEvents    AuditEvent[]
+  notifications  Notification[] @relation("StaffNotifications")
+
+  @@unique([tenantId, email])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  eventId     String?
+  event       Event?   @relation(fields: [eventId], references: [id])
+  recipientId String
+  recipient   StaffUser @relation("StaffNotifications", fields: [recipientId], references: [id])
+  type        String
+  title       String
+  body        String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([recipientId, read])
+  @@index([tenantId])
+}
+
+enum StaffRole {
+  PLATFORM_ADMIN
+  ADMIN
+  SUPERVISOR
+  STAFF
+}
+
+model EventStaffPermission {
+  id          String     @id @default(cuid())
+  eventId     String
+  event       Event      @relation(fields: [eventId], references: [id])
+  staffUserId String
+  staffUser   StaffUser  @relation(fields: [staffUserId], references: [id])
+  roleOverride StaffRole?
+
+  @@unique([eventId, staffUserId])
+}
+
+model AuditEvent {
+  id          String    @id @default(cuid())
+  eventId     String?
+  event       Event?    @relation(fields: [eventId], references: [id])
+  tenantId    String
+  actorType   String
+  actorId     String?
+  staffUserId String?
+  staffUser   StaffUser? @relation(fields: [staffUserId], references: [id])
+  action      String
+  metadata    Json      @default("{}")
+  createdAt   DateTime  @default(now())
+}
+
+model DeletionRun {
+  id                String    @id @default(cuid())
+  eventId           String
+  event             Event     @relation(fields: [eventId], references: [id])
+  triggeredBy       String
+  status            String    @default("PENDING")
+  enrollmentCount   Int       @default(0)
+  providerConfirmed Boolean   @default(false)
+  completedAt       DateTime?
+  auditRef          String?
+  createdAt         DateTime  @default(now())
+}

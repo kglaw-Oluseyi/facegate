@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FaceGate OS — Slice 1
 
-## Getting Started
+Luxury, dark-first facial re-entry administration console built on Next.js 14, Prisma, PostgreSQL (Neon), and next-auth v5 (credentials).
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 20+
+- PostgreSQL (this project is wired for Neon via `.env.local`)
+
+## Run instructions
 
 ```bash
+npm install
+npx prisma generate
+npx prisma db push
+npx prisma db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Prisma CLI reads `.env` by default. If your connection strings live only in `.env.local`, use:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx dotenv -e .env.local -- npx prisma db push
+npx dotenv -e .env.local -- npx prisma db seed
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Or run `npm run db:push`, which loads `.env.local` and performs push plus seed.
 
-## Learn More
+## Login
 
-To learn more about Next.js, take a look at the following resources:
+- **Email:** `admin@maisondoclar.com`
+- **Password:** `FaceGate2026!`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Kiosk heartbeat
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`POST /api/kiosk/heartbeat` with header:
 
-## Deploy on Vercel
+`Authorization: Basic base64(devicePublicId:deviceSecretPlaintext)`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Returns JSON `{ data: { eventStatus, gateActive }, error: null }` on success.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Gate kiosk
+
+- Full-screen kiosk: `/kiosk/[devicePublicId]` (use the device’s **devicePublicId** from the admin gate/device list).
+- After seeding, a demo tablet URL is `/kiosk/seed-kiosk-main` with access code printed by `prisma/seed.ts` (`FaceGateKiosk2026!`). Secrets are only entered once per browser tab and stored in `sessionStorage`.
+- Staff diagnostic checklist: `/kiosk/[devicePublicId]/diagnostic`.
+
+To simulate several gates at once, open `/kiosk/[devicePublicId]` in separate browser tabs with **different** device tokens — each gate device authenticates on its own and attempts are scoped per gate.
+
+## Security
+
+Rotate database credentials, AWS keys, and `NEXTAUTH_SECRET` before production. `.env.local` is gitignored — never commit secrets.
