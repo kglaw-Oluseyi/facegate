@@ -25,7 +25,15 @@ export function KioskSetupScreen({
           : "";
       const res = await fetch(`/api/kiosk/heartbeat?deviceToken=${encodeURIComponent(devicePublicId)}`, {
         method: "POST",
-        headers: { Authorization: auth },
+        headers: {
+          Authorization: auth,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          camera_ok: true,
+          provider_ok: true,
+        }),
       });
       const json = await res.json();
       if (!res.ok || json.error) {
